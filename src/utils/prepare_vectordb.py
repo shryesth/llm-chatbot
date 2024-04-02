@@ -3,7 +3,7 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 from typing import List
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings
 
 
 class PrepareVectorDB:
@@ -16,18 +16,16 @@ class PrepareVectorDB:
     Parameters:
         data_directory (str or List[str]): The directory or list of directories containing the documents.
         persist_directory (str): The directory to save the VectorDB.
-        embedding_model_engine (str): The engine for OpenAI embeddings.
         chunk_size (int): The size of the chunks for document processing.
         chunk_overlap (int): The overlap between chunks.
     """
 
     def __init__(
-            self,
-            data_directory: str,
-            persist_directory: str,
-            embedding_model_engine: str,
-            chunk_size: int,
-            chunk_overlap: int
+        self,
+        data_directory: str,
+        persist_directory: str,
+        chunk_size: int,
+        chunk_overlap: int,
     ) -> None:
         """
         Initialize the PrepareVectorDB instance.
@@ -35,22 +33,23 @@ class PrepareVectorDB:
         Parameters:
             data_directory (str or List[str]): The directory or list of directories containing the documents.
             persist_directory (str): The directory to save the VectorDB.
-            embedding_model_engine (str): The engine for OpenAI embeddings.
             chunk_size (int): The size of the chunks for document processing.
             chunk_overlap (int): The overlap between chunks.
 
         """
 
-        self.embedding_model_engine = embedding_model_engine
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
-            separators=["\n\n", "\n", " ", ""]
+            separators=["\n\n", "\n", " ", ""],
         )
         """Other options: CharacterTextSplitter, TokenTextSplitter, etc."""
         self.data_directory = data_directory
         self.persist_directory = persist_directory
-        self.embedding = OpenAIEmbeddings()
+        self.embedding_function = HuggingFaceEmbeddings(
+            model_name="BAAI/bge-large-en-v1.5",
+            # cache_folder=os.getenv('SENTENCE_TRANSFORMERS_HOME')
+        )
 
     def __load_all_documents(self) -> List:
         """
@@ -73,8 +72,9 @@ class PrepareVectorDB:
             document_list = os.listdir(self.data_directory)
             docs = []
             for doc_name in document_list:
-                docs.extend(PyPDFLoader(os.path.join(
-                    self.data_directory, doc_name)).load())
+                docs.extend(
+                    PyPDFLoader(os.path.join(self.data_directory, doc_name)).load()
+                )
                 doc_counter += 1
             print("Number of loaded documents:", doc_counter)
             print("Number of pages:", len(docs), "\n\n")
@@ -109,10 +109,9 @@ class PrepareVectorDB:
         print("Preparing vectordb...")
         vectordb = Chroma.from_documents(
             documents=chunked_documents,
-            embedding=self.embedding,
-            persist_directory=self.persist_directory
+            embedding=self.embedding_function,
+            persist_directory=self.persist_directory,
         )
         print("VectorDB is created and saved.")
-        print("Number of vectors in vectordb:",
-              vectordb._collection.count(), "\n\n")
+        print("Number of vectors in vectordb:", vectordb._collection.count(), "\n\n")
         return vectordb
