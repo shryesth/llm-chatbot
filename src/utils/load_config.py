@@ -8,15 +8,6 @@ load_dotenv()
 
 
 class LoadConfig:
-    """
-    A class for loading configuration settings and managing directories.
-
-    This class loads various configuration settings from the 'app_config.yml' file,
-    including language model (LLM) configurations, retrieval configurations, summarizer
-    configurations, and memory configurations. It also sets up OpenAI API credentials
-    and performs directory-related operations such as creating and removing directories.
-    """
-
     def __init__(self) -> None:
         with open(here("configs/app_config.yml")) as cfg:
             app_config = yaml.load(cfg, Loader=yaml.FullLoader)
