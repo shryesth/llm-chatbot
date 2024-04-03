@@ -7,19 +7,6 @@ from langchain.embeddings import HuggingFaceEmbeddings
 
 
 class PrepareVectorDB:
-    """
-    A class for preparing and saving a VectorDB using OpenAI embeddings.
-
-    This class facilitates the process of loading documents, chunking them, and creating a VectorDB
-    with OpenAI embeddings. It provides methods to prepare and save the VectorDB.
-
-    Parameters:
-        data_directory (str or List[str]): The directory or list of directories containing the documents.
-        persist_directory (str): The directory to save the VectorDB.
-        chunk_size (int): The size of the chunks for document processing.
-        chunk_overlap (int): The overlap between chunks.
-    """
-
     def __init__(
         self,
         data_directory: str,
@@ -27,23 +14,13 @@ class PrepareVectorDB:
         chunk_size: int,
         chunk_overlap: int,
     ) -> None:
-        """
-        Initialize the PrepareVectorDB instance.
-
-        Parameters:
-            data_directory (str or List[str]): The directory or list of directories containing the documents.
-            persist_directory (str): The directory to save the VectorDB.
-            chunk_size (int): The size of the chunks for document processing.
-            chunk_overlap (int): The overlap between chunks.
-
-        """
 
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
             separators=["\n\n", "\n", " ", ""],
         )
-        """Other options: CharacterTextSplitter, TokenTextSplitter, etc."""
+
         self.data_directory = data_directory
         self.persist_directory = persist_directory
         self.embedding_function = HuggingFaceEmbeddings(
@@ -52,12 +29,6 @@ class PrepareVectorDB:
         )
 
     def __load_all_documents(self) -> List:
-        """
-        Load all documents from the specified directory or directories.
-
-        Returns:
-            List: A list of loaded documents.
-        """
         doc_counter = 0
         if isinstance(self.data_directory, list):
             print("Loading the uploaded documents...")
@@ -82,28 +53,12 @@ class PrepareVectorDB:
         return docs
 
     def __chunk_documents(self, docs: List) -> List:
-        """
-        Chunk the loaded documents using the specified text splitter.
-
-        Parameters:
-            docs (List): The list of loaded documents.
-
-        Returns:
-            List: A list of chunked documents.
-
-        """
         print("Chunking documents...")
         chunked_documents = self.text_splitter.split_documents(docs)
         print("Number of chunks:", len(chunked_documents), "\n\n")
         return chunked_documents
 
     def prepare_and_save_vectordb(self):
-        """
-        Load, chunk, and create a VectorDB with OpenAI embeddings, and save it.
-
-        Returns:
-            Chroma: The created VectorDB.
-        """
         docs = self.__load_all_documents()
         chunked_documents = self.__chunk_documents(docs)
         print("Preparing vectordb...")

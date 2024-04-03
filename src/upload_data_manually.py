@@ -1,9 +1,7 @@
 import os
 from utils.prepare_vectordb import PrepareVectorDB
-from utils.load_config import LoadConfig
 
-CONFIG = LoadConfig()
-
+persist_directory = "data/vectordb/processed/chroma/"
 
 def upload_data_manually() -> None:
     """
@@ -18,16 +16,18 @@ def upload_data_manually() -> None:
     Returns:
         None
     """
+    os.makedirs(persist_directory, exist_ok=True)
+    
     prepare_vectordb_instance = PrepareVectorDB(
-        data_directory=CONFIG.data_directory,
-        persist_directory=CONFIG.persist_directory,
-        chunk_size=CONFIG.chunk_size,
-        chunk_overlap=CONFIG.chunk_overlap,
+        data_directory="data/docs",
+        persist_directory=persist_directory,
+        chunk_size=1500,
+        chunk_overlap=250,
     )
-    if not len(os.listdir(CONFIG.persist_directory)) != 0:
+    if len(os.listdir("data/vectordb/processed/chroma/")) == 0:
         prepare_vectordb_instance.prepare_and_save_vectordb()
     else:
-        print(f"VectorDB already exists in {CONFIG.persist_directory}")
+        print(f"VectorDB already exists in {persist_directory}")
     return None
 
 
