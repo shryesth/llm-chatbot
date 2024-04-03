@@ -2,12 +2,6 @@
 
 This repository contains the code for an internship project that implements a large language model (LLM) chatbot.
 
-## Features
-
-- **Conversational Interface:** Interact with the chatbot through a user-friendly interface (details on implementation to be provided).
-- **Contextual Responses:** The chatbot leverages retrieved information to generate responses relevant to the conversation context (details on retrieval strategy to be provided).
-- **Large Language Model Integration:** The chatbot utilizes a large language model (LLM) to generate responses (details on specific LLM and setup to be provided).
-
 ## Setup
 
 ### Clone the Repository:
