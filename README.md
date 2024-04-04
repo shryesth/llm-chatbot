@@ -1,5 +1,4 @@
-# Internship Project: LLM-based Chatbot
-
+# Internship Project: RAG Backend
 This repository contains the code for an internship project that implements a large language model (LLM) chatbot.
 
 ## Setup
