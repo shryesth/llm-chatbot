@@ -18,7 +18,7 @@ git clone https://github.com/shryesth/llm-chatbot.git
 GEMMA_TOKEN=xxxxxxxxxx
 GOOGLE_API_KEY=xxxxxxxxxx
 ```
-- Note: Gemma token is Hugging Face API Key
+- Note: Gemma token is Hugging Face API Key.
 
 
 ### Install Dependencies:
